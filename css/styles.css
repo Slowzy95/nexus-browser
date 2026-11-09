@@ -337,6 +337,18 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 8px; min-height: min(72vh, 640px); padding: 30px 20px; text-align: center;
 }
+.browser-blocked {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; min-height: min(72vh, 640px); padding: 30px 20px; text-align: center;
+}
+.browser-blocked h2 { margin: 0; font-size: 21px; }
+.browser-blocked p { color: var(--muted); max-width: 520px; margin: 0; }
+.browser-blocked .primary { margin-top: 8px; }
+.blocked-icon {
+  width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--panel3); color: var(--amber); margin-bottom: 4px;
+}
+.blocked-icon svg { width: 30px; height: 30px; }
 .welcome-mark { width: 56px; height: 56px; font-size: 24px; margin-bottom: 6px; }
 .browser-welcome h2 { margin: 0; font-size: 22px; }
 .browser-welcome p { color: var(--muted); margin: 0; max-width: 480px; }

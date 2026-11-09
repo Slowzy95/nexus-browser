@@ -114,6 +114,22 @@ export function renderTabStrip() {
   renderTabContent();
 }
 
+/* Hôtes connus pour refuser l'intégration (X-Frame-Options / CSP).
+   Liste indicative : le message affiché est honnête, la navigation externe reste possible. */
+const KNOWN_BLOCKED_HOSTS = [
+  'github.com', 'google.com', 'youtube.com', 'reddit.com', 'duckduckgo.com',
+  'qwant.com', 'startpage.com', 'ecosia.org', 'facebook.com', 'instagram.com',
+  'x.com', 'twitter.com', 'netflix.com', 'amazon.fr', 'amazon.com',
+  'linkedin.com', 'tiktok.com', 'openstreetmap.org', 'gmail.com', 'accounts.google.com',
+];
+
+function isKnownBlocked(url) {
+  try {
+    const h = new URL(url).hostname.replace(/^www\./, '');
+    return KNOWN_BLOCKED_HOSTS.some(b => h === b || h.endsWith('.' + b));
+  } catch { return false; }
+}
+
 function renderTabContent() {
   const content = $('#browserContent');
   const tab = activeTab();
@@ -128,13 +144,28 @@ function renderTabContent() {
         <p>${escapeHtml(t('browser.welcomeSub'))}</p>
         <div class="quick-links">
           <button data-url="https://www.wikipedia.org">Wikipedia</button>
-          <button data-url="https://duckduckgo.com">DuckDuckGo</button>
-          <button data-url="https://www.qwant.com">Qwant</button>
-          <button data-url="https://github.com">GitHub</button>
+          <button data-url="https://www.bing.com">Bing</button>
+          <button data-url="https://example.com">example.com</button>
         </div>
         <p class="frame-warning">${escapeHtml(t('browser.frameHint'))}</p>
       </div>`;
     $$('#browserContent [data-url]').forEach(b => b.addEventListener('click', () => navigate(b.dataset.url)));
+    return;
+  }
+
+  // Site connu pour bloquer l'intégration : message dédié + ouverture externe
+  if (isKnownBlocked(tab.url) && !(state.settings.proxy || '').trim()) {
+    content.innerHTML = `
+      <div class="browser-blocked">
+        <div class="blocked-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3 3 20h18Z"/><path d="M12 10v4M12 17.2v.01"/></svg>
+        </div>
+        <h2>${escapeHtml(t('browser.blockedTitle'))}</h2>
+        <p>${escapeHtml(t('browser.blockedBody', { host: hostOf(tab.url) }))}</p>
+        <button class="primary" id="blockedOpen">${escapeHtml(t('browser.frameHintOpen'))}</button>
+        <p class="frame-warning">${escapeHtml(t('browser.blockedHint'))}</p>
+      </div>`;
+    $('#blockedOpen').addEventListener('click', () => window.open(tab.url, '_blank', 'noopener,noreferrer'));
     return;
   }
 
