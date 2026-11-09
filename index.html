@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d111b" id="metaThemeColor">
+  <meta name="description" content="NEXUS Browser — navigateur web hybride : recherche, onglets, favoris, historique, mini-applications et mini-jeux.">
+  <meta name="color-scheme" content="dark light">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; connect-src 'self'; frame-src https:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>NEXUS Browser</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop" data-i18n-aria="sidebar.close" aria-label="Fermer le menu"></div>
+
+    <!-- ══════════ SIDEBAR ══════════ -->
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" data-view="home" aria-label="NEXUS — Accueil">
+        <span class="brand-mark" aria-hidden="true">N</span><span class="brand-name">NEXUS</span>
+      </a>
+
+      <div class="side-label" data-i18n="sidebar.space">ESPACE</div>
+      <nav class="side-nav" aria-label="Navigation principale">
+        <button class="nav-item" data-view="home"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5Z"/></svg><span data-i18n="nav.home">Accueil</span></button>
+        <button class="nav-item" data-view="browser"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span data-i18n="nav.browser">Navigateur</span></button>
+        <button class="nav-item" data-view="apps"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span data-i18n="nav.apps">Applications</span></button>
+        <button class="nav-item" data-view="games"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 6h10a5 5 0 0 1 5 5v2a5 5 0 0 1-5 5c-1.5 0-2-1-3.5-1s-2 1-3.5 1a5 5 0 0 1-5-5v-2a5 5 0 0 1 5-5Z"/><path d="M8 11v3M6.5 12.5h3M15.5 11h.01M17.5 13h.01"/></svg><span data-i18n="nav.games">Jeux</span></button>
+      </nav>
+
+      <div class="side-label lower" data-i18n="sidebar.personal">PERSONNEL</div>
+      <nav class="side-nav" aria-label="Données personnelles">
+        <button class="nav-item" data-view="favorites"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.6 2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.8l5.9-.9Z"/></svg><span data-i18n="nav.favorites">Favoris</span><span class="nav-badge" id="favCount" hidden>0</span></button>
+        <button class="nav-item" data-view="history"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span data-i18n="nav.history">Historique</span></button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" data-open-settings><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2 2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 2.9-1.2 2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9 2 2 0 1 1 0 4Z"/></svg><span data-i18n="nav.settings">Paramètres</span></button>
+        <div class="status"><span class="status-dot" aria-hidden="true"></span><span data-i18n="sidebar.status">Mode local actif</span></div>
+        <div class="small-muted">NEXUS Browser · v1.0</div>
+      </div>
+    </aside>
+
+    <!-- ══════════ MAIN ══════════ -->
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-button menu-btn" id="menuBtn" data-i18n-aria="sidebar.open" aria-label="Ouvrir le menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <div class="mobile-brand"><span class="brand-mark" aria-hidden="true">N</span><span>NEXUS</span></div>
+        <div class="breadcrumb" id="breadcrumb" aria-live="polite"></div>
+        <div class="top-actions">
+          <button class="icon-button" id="themeBtn" data-i18n-title="theme.toggle" title="Changer le thème" data-i18n-aria="theme.toggle" aria-label="Changer le thème">
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 15.2A8.5 8.5 0 1 1 9.3 4a7 7 0 1 0 11.1 11.2Z"/></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/></svg>
+          </button>
+          <button class="icon-button" data-open-settings data-i18n-title="nav.settings" title="Paramètres" data-i18n-aria="nav.settings" aria-label="Paramètres">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M4.6 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1A1.7 1.7 0 0 1 .9 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9 4.6a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 19.4 11a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.2 2.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15Z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- ─── ACCUEIL ─── -->
+      <section class="view active" id="view-home">
+        <div class="hero">
+          <div class="eyebrow" data-i18n="home.eyebrow">VOTRE ESPACE WEB</div>
+          <h1 data-i18n-html="home.title">Tout votre web.<br>Au même endroit.</h1>
+          <p data-i18n="home.subtitle">Un navigateur hybride pour retrouver vos sites, applications et jeux — rapide, privé et installable.</p>
+          <form class="searchbar" id="mainSearch" role="search">
+            <svg class="search-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+            <input id="mainQuery" data-i18n-ph="home.searchPlaceholder" placeholder="Rechercher sur le Web ou saisir une adresse…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="Recherche">
+            <button type="submit" data-i18n="home.search">Rechercher</button>
+          </form>
+          <div class="search-note" id="searchNote"></div>
+        </div>
+
+        <div class="section-head">
+          <div><div class="eyebrow" data-i18n="home.shortcutsEyebrow">ACCÈS RAPIDE</div><h2 data-i18n="home.shortcuts">Vos raccourcis</h2></div>
+          <div class="section-actions">
+            <button class="text-button" id="addShortcutBtn" data-i18n="shortcut.add">+ Ajouter</button>
+          </div>
+        </div>
+        <div class="shortcut-grid" id="shortcutGrid"></div>
+
+        <div class="section-head">
+          <div><div class="eyebrow" data-i18n="home.appsEyebrow">DÉCOUVRIR</div><h2 data-i18n="home.apps">Applications suggérées</h2></div>
+          <button class="text-button" data-view="apps"><span data-i18n="common.seeAll">Tout afficher</span> <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="app-grid" id="homeApps"></div>
+
+        <div class="section-head">
+          <div><div class="eyebrow" data-i18n="home.recentEyebrow">REPRISE RAPIDE</div><h2 data-i18n="home.recent">Récemment visités</h2></div>
+          <button class="text-button" data-view="history"><span data-i18n="nav.history">Historique</span> <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="recent-list" id="recentList"></div>
+
+        <div class="notice">
+          <span class="notice-icon" aria-hidden="true">i</span>
+          <div><strong data-i18n="home.noticeTitle">À savoir sur NEXUS</strong>
+          <p data-i18n="home.noticeBody">NEXUS est une application web : les sites qui interdisent l'intégration (X-Frame-Options / CSP) ne peuvent pas s'afficher dans le cadre intégré — utilisez alors le bouton « Ouvrir en externe ». Cette application ne contourne aucune restriction de site, de réseau ou d'administration.</p></div>
+        </div>
+      </section>
+
+      <!-- ─── NAVIGATEUR ─── -->
+      <section class="view" id="view-browser">
+        <div class="browser-frame">
+          <div class="tab-strip" id="tabStrip" role="tablist" aria-label="Onglets"></div>
+          <div class="browser-toolbar">
+            <button class="tool-btn" id="backBtn" data-i18n-title="browser.back" title="Retour" data-i18n-aria="browser.back" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <button class="tool-btn" id="fwdBtn" data-i18n-title="browser.forward" title="Avancer" data-i18n-aria="browser.forward" aria-label="Avancer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+            <button class="tool-btn" id="reloadBtn" data-i18n-title="browser.reload" title="Actualiser" data-i18n-aria="browser.reload" aria-label="Actualiser"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"/></svg></button>
+            <form class="address-form" id="addressForm">
+              <svg class="search-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+              <input id="addressInput" data-i18n-ph="browser.addressPlaceholder" placeholder="Adresse ou recherche…" autocomplete="off" spellcheck="false" inputmode="url" aria-label="Barre d'adresse">
+              <button type="submit" data-i18n="browser.go">Aller</button>
+            </form>
+            <button class="tool-btn" id="favBtn" data-i18n-title="favorites.add" title="Ajouter aux favoris" data-i18n-aria="favorites.add" aria-label="Ajouter aux favoris"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.6 2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.8l5.9-.9Z"/></svg></button>
+            <button class="tool-btn" id="externalBtn" data-i18n-title="browser.external" title="Ouvrir en externe" data-i18n-aria="browser.external" aria-label="Ouvrir en externe"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H10"/></svg></button>
+          </div>
+          <div class="browser-content" id="browserContent" aria-live="polite"></div>
+          <div class="frame-hint" id="frameHint">
+            <span data-i18n="browser.frameHint">Page vide ou bloquée ? Le site interdit peut-être l'intégration.</span>
+            <button class="text-button" id="frameHintOpen" data-i18n="browser.frameHintOpen">Ouvrir en externe ↗</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── APPLICATIONS ─── -->
+      <section class="view" id="view-apps">
+        <div class="eyebrow" data-i18n="apps.eyebrow">RÉPERTOIRE</div>
+        <h2 class="page-title" data-i18n="nav.apps">Applications</h2>
+        <p class="page-subtitle" data-i18n="apps.subtitle">Vos services web regroupés dans un seul espace.</p>
+        <div class="filter-row">
+          <input id="appFilter" data-i18n-ph="apps.filterPlaceholder" placeholder="Filtrer les applications…" autocomplete="off" aria-label="Filtrer les applications">
+          <span class="filter-count" id="appCount"></span>
+        </div>
+        <div class="app-grid large" id="allApps"></div>
+      </section>
+
+      <!-- ─── JEUX ─── -->
+      <section class="view" id="view-games">
+        <div class="eyebrow" data-i18n="games.eyebrow">DÉTENTE</div>
+        <h2 class="page-title" data-i18n="nav.games">Jeux</h2>
+        <p class="page-subtitle" data-i18n="games.subtitle">Mini-jeux autonomes, sans compte ni connexion.</p>
+        <div class="game-grid" id="gameGrid"></div>
+        <div class="game-panel" id="gamePanel" aria-live="polite">
+          <div class="game-placeholder" data-i18n="games.placeholder">Sélectionnez un jeu pour commencer.</div>
+        </div>
+      </section>
+
+      <!-- ─── FAVORIS ─── -->
+      <section class="view" id="view-favorites">
+        <div class="eyebrow" data-i18n="favorites.eyebrow">PERSONNEL</div>
+        <h2 class="page-title" data-i18n="nav.favorites">Favoris</h2>
+        <p class="page-subtitle" data-i18n="favorites.subtitle">Enregistrés sur cet appareil uniquement.</p>
+        <div class="list-toolbar">
+          <button class="primary" id="addFavoriteBtn" data-i18n="favorites.add">+ Ajouter un favori</button>
+        </div>
+        <div class="recent-list" id="favoritesList"></div>
+      </section>
+
+      <!-- ─── HISTORIQUE ─── -->
+      <section class="view" id="view-history">
+        <div class="eyebrow" data-i18n="history.eyebrow">PERSONNEL</div>
+        <h2 class="page-title" data-i18n="nav.history">Historique</h2>
+        <p class="page-subtitle" data-i18n="history.subtitle">Pages ouvertes depuis cet appareil.</p>
+        <div class="list-toolbar">
+          <input id="historyFilter" data-i18n-ph="history.searchPlaceholder" placeholder="Rechercher dans l'historique…" autocomplete="off" aria-label="Rechercher dans l'historique">
+          <button class="secondary danger" id="clearHistory" data-i18n="history.clear">Effacer l'historique</button>
+        </div>
+        <div class="recent-list" id="historyList"></div>
+      </section>
+
+      <footer class="footer">© 2026 NEXUS Browser <span data-i18n="footer.tagline">Une expérience web personnelle, locale et privée</span></footer>
+    </div>
+  </div>
+
+  <!-- ══════════ MODALES ══════════ -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
